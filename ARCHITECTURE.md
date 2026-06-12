@@ -20,8 +20,8 @@ Main → Application
               │                             └── ProductionService (순환참조 방지: 생성자 주입)
               ├── ApprovalController  → OrderService
               ├── ProductionController→ ProductionService   → ProductionJobRepository → JsonFileStore
-              │                             ├── SampleRepository
-              │                             └── OrderRepository
+              │                       (listRunningJobs/    ├── SampleRepository
+              │                        listWaitingJobs)    └── OrderRepository
               ├── ReleaseController   → ReleaseService      → OrderRepository / SampleRepository
               └── MonitoringController→ MonitoringService   → 3 repositories
 ```

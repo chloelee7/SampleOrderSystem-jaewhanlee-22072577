@@ -41,8 +41,8 @@ PDF 과제 요구사항과 구현 위치·테스트 위치의 1:1 대응표.
 
 | 요구사항 | 구현 | 테스트 |
 |---|---|---|
-| 생산 현황 (RUNNING 작업 정보 + 총시간·시작·완료예정) | `ProductionController`, `TablePrinter.printProductionJobs()` | `HarnessScenarioTest`, `TablePrinterTest` |
-| 대기 큐 조회 (FIFO 순서) | `ProductionController`, `ProductionJobRepository` | `WorkflowServiceTest.processesProductionJobsInFifoOrderAndConfirmsOrders` |
+| 생산 현황 (RUNNING 작업 정보 + 총시간·시작·완료예정) | `ProductionController`, `ProductionService.listRunningJobs()`, `TablePrinter.printProductionJobs()` | `WorkflowServiceTest.listProductionJobsByStatusForLineDisplay`, `HarnessScenarioTest`, `TablePrinterTest` |
+| 대기 큐 조회 (FIFO 순서) | `ProductionController`, `ProductionService.listWaitingJobs()` | `WorkflowServiceTest.listProductionJobsByStatusForLineDisplay`, `WorkflowServiceTest.processesProductionJobsInFifoOrderAndConfirmsOrders` |
 | 시간 경과 처리 (1분 이상 입력 강제) | `ProductionController`, `MutableTimeProvider.advanceMinutes()`, `ProductionService.synchronizeProductionLine()` | `WorkflowServiceTest`, `HarnessScenarioTest`, `MutableTimeProviderTest` |
 | 실 생산량 = ceil(부족분 / (수율 × 0.9)) | `ProductionCalculator.plannedProductionQuantity()` | `ProductionCalculatorTest` |
 | 총 생산시간 = 평균시간 × 실생산량 | `ProductionCalculator.totalProductionTimeMinutes()` | `ProductionCalculatorTest` |
@@ -81,6 +81,6 @@ PDF 과제 요구사항과 구현 위치·테스트 위치의 1:1 대응표.
 |---|---|
 | CLAUDE.md / PRD.md 등 문서 관리 | `CLAUDE.md`, `PRD.md`, `README.md`, `ARCHITECTURE.md`, `TEST_PLAN.md` |
 | Harness 도입 | `app/HarnessScenarioTest.java`, `harness/SCENARIO.md` |
-| Test | 34개 단위/통합 테스트 (`./gradlew test`) |
+| Test | 36개 단위/통합 테스트 (`./gradlew test`) |
 | CleanCode | record 도메인 모델, 레이어 분리 (controller/service/repository/persistence) |
 | Commit 이력 | 16개 의미있는 커밋 (`git log --oneline`) |
