@@ -14,6 +14,7 @@ import com.ssemi.sampleorder.util.TimeProvider;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 public class ProductionService {
@@ -51,6 +52,19 @@ public class ProductionService {
         productionJobRepository.save(job);
         startNextWaitingJobIfIdle(timeProvider.now());
         return productionJobRepository.findById(job.id()).orElseThrow();
+    }
+
+    public List<ProductionJob> listRunningJobs() {
+        return productionJobRepository.findAll().stream()
+                .filter(job -> job.status() == ProductionJobStatus.RUNNING)
+                .toList();
+    }
+
+    public List<ProductionJob> listWaitingJobs() {
+        return productionJobRepository.findAll().stream()
+                .filter(job -> job.status() == ProductionJobStatus.WAITING)
+                .sorted(Comparator.comparing(ProductionJob::createdAt))
+                .toList();
     }
 
     public void synchronizeProductionLine() {

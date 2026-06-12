@@ -166,6 +166,21 @@ class WorkflowServiceTest {
     }
 
     @Test
+    void listProductionJobsByStatusForLineDisplay() {
+        sampleService.registerSample("S-003", "SiC 파워기판-6인치", 0.8, 0.92, 0);
+        orderService.approveOrder(orderService.reserveOrder("S-003", "Lab A", 10).id()); // RUNNING
+        orderService.approveOrder(orderService.reserveOrder("S-003", "Lab B", 5).id());  // WAITING
+
+        List<ProductionJob> running = productionService.listRunningJobs();
+        List<ProductionJob> waiting = productionService.listWaitingJobs();
+
+        assertEquals(1, running.size());
+        assertEquals(ProductionJobStatus.RUNNING, running.get(0).status());
+        assertEquals(1, waiting.size());
+        assertEquals(ProductionJobStatus.WAITING, waiting.get(0).status());
+    }
+
+    @Test
     void snapshotContainsOrdersGroupedByStatus() {
         sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
         Order reserved = orderService.reserveOrder("S-001", "AI Lab", 5);
