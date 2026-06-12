@@ -108,6 +108,24 @@ class WorkflowServiceTest {
     }
 
     @Test
+    void completesMultipleJobsWhenSufficientTimeElapses() {
+        sampleService.registerSample("S-003", "SiC 파워기판-6인치", 0.8, 0.92, 0);
+        Order first = orderService.reserveOrder("S-003", "Lab A", 10);
+        Order second = orderService.reserveOrder("S-003", "Lab B", 5);
+        orderService.approveOrder(first.id());  // JOB-0001 RUNNING (ceil(10/(0.92*0.9))=13개, 0.8*13=10.4분)
+        orderService.approveOrder(second.id()); // JOB-0002 WAITING (ceil(5/(0.92*0.9))=7개, 0.8*7=5.6분)
+
+        // 두 번째 작업은 첫 번째 완료 직후 시작 → 총 ~16분 후 모두 완료 가능
+        timeProvider.advanceMinutes(20);
+        productionService.synchronizeProductionLine();
+
+        assertEquals(OrderStatus.CONFIRMED, orderRepository.findById(first.id()).orElseThrow().status());
+        assertEquals(OrderStatus.CONFIRMED, orderRepository.findById(second.id()).orElseThrow().status());
+        assertEquals(ProductionJobStatus.COMPLETED, productionJobRepository.findAll().get(0).status());
+        assertEquals(ProductionJobStatus.COMPLETED, productionJobRepository.findAll().get(1).status());
+    }
+
+    @Test
     void releasesConfirmedOrderAndDecreasesStock() {
         sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
         Order order = orderService.reserveOrder("S-001", "AI Lab", 10);

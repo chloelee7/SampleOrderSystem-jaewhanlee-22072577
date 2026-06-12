@@ -12,6 +12,7 @@ import com.ssemi.sampleorder.util.IdGenerator;
 import com.ssemi.sampleorder.util.ProductionCalculator;
 import com.ssemi.sampleorder.util.TimeProvider;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -48,17 +49,20 @@ public class ProductionService {
                 timeProvider.now()
         );
         productionJobRepository.save(job);
-        startNextWaitingJobIfIdle();
+        startNextWaitingJobIfIdle(timeProvider.now());
         return productionJobRepository.findById(job.id()).orElseThrow();
     }
 
     public void synchronizeProductionLine() {
         Optional<ProductionJob> runningJob = runningJob();
-        if (runningJob.isPresent() && !runningJob.get().expectedEndAt().isAfter(timeProvider.now())) {
+        while (runningJob.isPresent() && !runningJob.get().expectedEndAt().isAfter(timeProvider.now())) {
+            LocalDateTime nextStartTime = runningJob.get().expectedEndAt();
             completeJob(runningJob.get());
-            startNextWaitingJobIfIdle();
-        } else if (runningJob.isEmpty()) {
-            startNextWaitingJobIfIdle();
+            startNextWaitingJobIfIdle(nextStartTime);
+            runningJob = runningJob();
+        }
+        if (runningJob.isEmpty()) {
+            startNextWaitingJobIfIdle(timeProvider.now());
         }
     }
 
@@ -68,14 +72,14 @@ public class ProductionService {
                 .findFirst();
     }
 
-    private void startNextWaitingJobIfIdle() {
+    private void startNextWaitingJobIfIdle(LocalDateTime startTime) {
         if (runningJob().isPresent()) {
             return;
         }
         productionJobRepository.findAll().stream()
                 .filter(job -> job.status() == ProductionJobStatus.WAITING)
                 .min(Comparator.comparing(ProductionJob::createdAt))
-                .map(job -> job.start(timeProvider.now()))
+                .map(job -> job.start(startTime))
                 .ifPresent(productionJobRepository::update);
     }
 
