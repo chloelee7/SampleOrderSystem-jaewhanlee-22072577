@@ -48,9 +48,6 @@ public class DummyDataService {
         saveJobIfMissing(jobIds, ProductionJob.waiting("JOB-D001", "ORD-D003", "S-003", 10, 13, 0.8, BASE_TIME)
                 .start(BASE_TIME)
                 .complete(BASE_TIME.plusMinutes(11)));
-        saveJobIfMissing(jobIds, ProductionJob.waiting("JOB-D002", "ORD-D005", "S-005", 8, 11, 0.6, BASE_TIME.plusMinutes(1))
-                .start(BASE_TIME.plusMinutes(1))
-                .complete(BASE_TIME.plusMinutes(8)));
     }
 
     private void saveSampleIfMissing(Set<String> existingIds, Sample sample) {
