@@ -78,4 +78,27 @@ class SampleAndOrderServiceTest {
         assertThrows(IllegalArgumentException.class,
                 () -> orderService.reserveOrder("S-999", "AI Lab", 10));
     }
+
+    @Test
+    void listReservedOrdersReturnsOnlyReservedStatus() {
+        SampleService sampleService = new SampleService(sampleRepository);
+        sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
+        OrderService orderService = new OrderService(sampleRepository, orderRepository, sequenceRepository, timeProvider);
+        FileProductionJobRepository productionJobRepository = new FileProductionJobRepository(tempDir.resolve("production_jobs.json"));
+        FileSequenceRepository seqRepo = new FileSequenceRepository(tempDir.resolve("sequences2.json"));
+        ProductionService productionService = new ProductionService(sampleRepository, orderRepository, productionJobRepository, seqRepo, timeProvider);
+        OrderService fullOrderService = new OrderService(sampleRepository, orderRepository, sequenceRepository, timeProvider, productionService);
+
+        Order reserved = orderService.reserveOrder("S-001", "AI Lab", 5);
+        Order confirmed = orderService.reserveOrder("S-001", "Fab B", 10);
+        fullOrderService.approveOrder(confirmed.id());
+        Order rejected = orderService.reserveOrder("S-001", "Reject Co", 3);
+        orderService.rejectOrder(rejected.id());
+
+        List<Order> result = orderService.listReservedOrders();
+
+        assertEquals(1, result.size());
+        assertEquals(reserved.id(), result.get(0).id());
+        assertEquals(OrderStatus.RESERVED, result.get(0).status());
+    }
 }

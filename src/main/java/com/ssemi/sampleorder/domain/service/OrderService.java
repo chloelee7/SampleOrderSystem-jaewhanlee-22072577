@@ -3,6 +3,8 @@ package com.ssemi.sampleorder.domain.service;
 import com.ssemi.sampleorder.domain.model.Order;
 import com.ssemi.sampleorder.domain.model.OrderStatus;
 import com.ssemi.sampleorder.domain.model.Sample;
+
+import java.util.List;
 import com.ssemi.sampleorder.repository.OrderRepository;
 import com.ssemi.sampleorder.repository.SampleRepository;
 import com.ssemi.sampleorder.repository.SequenceRepository;
@@ -55,6 +57,13 @@ public class OrderService {
         );
         orderRepository.save(order);
         return order;
+    }
+
+    public List<Order> listReservedOrders() {
+        return orderRepository.findAll().stream()
+                .filter(order -> order.status() == OrderStatus.RESERVED)
+                .sorted(java.util.Comparator.comparing(Order::createdAt))
+                .toList();
     }
 
     public Order rejectOrder(String orderId) {

@@ -50,7 +50,7 @@ public class MainController {
         this.timeProvider = timeProvider;
         this.sampleController = new SampleController(sampleService, inputView, outputView);
         this.orderController = new OrderController(orderService, inputView, outputView);
-        this.approvalController = new ApprovalController(orderService, orderRepository, inputView, outputView);
+        this.approvalController = new ApprovalController(orderService, inputView, outputView);
         this.monitoringController = new MonitoringController(monitoringService, outputView);
         this.productionController = new ProductionController(productionService, productionJobRepository, timeProvider, inputView, outputView);
         this.releaseController = new ReleaseController(releaseService, orderRepository, inputView, outputView);

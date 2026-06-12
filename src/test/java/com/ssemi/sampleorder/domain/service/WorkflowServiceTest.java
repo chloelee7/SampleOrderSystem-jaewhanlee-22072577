@@ -121,8 +121,15 @@ class WorkflowServiceTest {
 
         assertEquals(OrderStatus.CONFIRMED, orderRepository.findById(first.id()).orElseThrow().status());
         assertEquals(OrderStatus.CONFIRMED, orderRepository.findById(second.id()).orElseThrow().status());
-        assertEquals(ProductionJobStatus.COMPLETED, productionJobRepository.findAll().get(0).status());
-        assertEquals(ProductionJobStatus.COMPLETED, productionJobRepository.findAll().get(1).status());
+        ProductionJob job1 = productionJobRepository.findAll().get(0);
+        ProductionJob job2 = productionJobRepository.findAll().get(1);
+        assertEquals(ProductionJobStatus.COMPLETED, job1.status());
+        assertEquals(ProductionJobStatus.COMPLETED, job2.status());
+        // completedAt은 시스템 동기화 시각이 아닌 이론적 완료 시각(expectedEndAt)이어야 함
+        assertEquals(job1.expectedEndAt(), job1.completedAt());
+        assertEquals(job2.expectedEndAt(), job2.completedAt());
+        // 두 번째 작업의 시작 시각은 첫 번째 작업의 완료 시각과 같아야 함
+        assertEquals(job1.expectedEndAt(), job2.startedAt());
     }
 
     @Test

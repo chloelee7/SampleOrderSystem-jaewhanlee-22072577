@@ -84,7 +84,7 @@ public class ProductionService {
     }
 
     private void completeJob(ProductionJob job) {
-        ProductionJob completed = job.complete(timeProvider.now());
+        ProductionJob completed = job.complete(job.expectedEndAt());
         productionJobRepository.update(completed);
 
         Sample sample = sampleRepository.findById(job.sampleId())
@@ -93,6 +93,6 @@ public class ProductionService {
 
         Order order = orderRepository.findById(job.orderId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 ID입니다: " + job.orderId()));
-        orderRepository.update(order.toConfirmed(order.allocatedQuantity() + job.shortageQuantity(), timeProvider.now()));
+        orderRepository.update(order.toConfirmed(order.allocatedQuantity() + job.shortageQuantity(), job.expectedEndAt()));
     }
 }
