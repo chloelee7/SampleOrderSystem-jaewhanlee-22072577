@@ -8,6 +8,8 @@ import com.ssemi.sampleorder.repository.SampleRepository;
 import com.ssemi.sampleorder.util.TimeProvider;
 import com.ssemi.sampleorder.util.ValidationUtils;
 
+import java.util.List;
+
 public class ReleaseService {
     private final SampleRepository sampleRepository;
     private final OrderRepository orderRepository;
@@ -17,6 +19,12 @@ public class ReleaseService {
         this.sampleRepository = sampleRepository;
         this.orderRepository = orderRepository;
         this.timeProvider = timeProvider;
+    }
+
+    public List<Order> listConfirmedOrders() {
+        return orderRepository.findAll().stream()
+                .filter(order -> order.status() == OrderStatus.CONFIRMED)
+                .toList();
     }
 
     public Order releaseOrder(String orderId) {

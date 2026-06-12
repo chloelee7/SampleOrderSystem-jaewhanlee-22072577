@@ -150,6 +150,22 @@ class WorkflowServiceTest {
     }
 
     @Test
+    void listConfirmedOrdersReturnsOnlyConfirmed() {
+        sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
+        orderService.reserveOrder("S-001", "Reserved Co", 5);
+        Order toConfirm = orderService.reserveOrder("S-001", "Confirm Co", 5);
+        orderService.approveOrder(toConfirm.id());
+        Order toRelease = orderService.reserveOrder("S-001", "Release Co", 5);
+        orderService.approveOrder(toRelease.id());
+        releaseService.releaseOrder(toRelease.id());
+
+        List<Order> confirmed = releaseService.listConfirmedOrders();
+
+        assertEquals(1, confirmed.size());
+        assertEquals(OrderStatus.CONFIRMED, confirmed.get(0).status());
+    }
+
+    @Test
     void snapshotContainsOrdersGroupedByStatus() {
         sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
         Order reserved = orderService.reserveOrder("S-001", "AI Lab", 5);

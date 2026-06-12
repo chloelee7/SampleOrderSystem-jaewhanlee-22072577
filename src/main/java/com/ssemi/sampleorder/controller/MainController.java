@@ -53,7 +53,7 @@ public class MainController {
         this.approvalController = new ApprovalController(orderService, inputView, outputView);
         this.monitoringController = new MonitoringController(monitoringService, outputView);
         this.productionController = new ProductionController(productionService, productionJobRepository, timeProvider, inputView, outputView);
-        this.releaseController = new ReleaseController(releaseService, orderRepository, inputView, outputView);
+        this.releaseController = new ReleaseController(releaseService, inputView, outputView);
         this.dummyDataService = dummyDataService;
         this.inputView = inputView;
         this.outputView = outputView;
