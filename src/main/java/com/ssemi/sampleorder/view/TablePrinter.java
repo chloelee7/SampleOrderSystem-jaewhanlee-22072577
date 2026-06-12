@@ -37,10 +37,15 @@ public final class TablePrinter {
     }
 
     public static void printProductionJobs(List<ProductionJob> jobs) {
-        System.out.printf("%-10s %-10s %-8s %8s %8s %-10s%n", "작업ID", "주문ID", "시료ID", "부족", "계획", "상태");
+        System.out.printf("%-10s %-10s %-8s %8s %8s %-10s %8s %-19s %-19s%n",
+                "작업ID", "주문ID", "시료ID", "부족", "계획", "상태", "총시간", "시작", "완료예정");
         for (ProductionJob job : jobs) {
-            System.out.printf("%-10s %-10s %-8s %8d %8d %-10s%n",
-                    job.id(), job.orderId(), job.sampleId(), job.shortageQuantity(), job.plannedProductionQuantity(), job.status());
+            String startedAt = job.startedAt() != null ? job.startedAt().toString() : "-";
+            String expectedEndAt = job.expectedEndAt() != null ? job.expectedEndAt().toString() : "-";
+            System.out.printf("%-10s %-10s %-8s %8d %8d %-10s %8.1f %-19s %-19s%n",
+                    job.id(), job.orderId(), job.sampleId(),
+                    job.shortageQuantity(), job.plannedProductionQuantity(), job.status(),
+                    job.totalProductionTimeMinutes(), startedAt, expectedEndAt);
         }
     }
 }
