@@ -45,10 +45,22 @@
 - 재고 충분 시 승인: CONFIRMED, allocatedQuantity 설정, 가용재고 감소
 - 재고 부족 시 승인: PRODUCING, ProductionJob(RUNNING) 생성
 - 생산 FIFO: 첫 번째 잡 완료 → 두 번째 잡 시작
+- 여러 작업 일괄 완료: 충분한 시간 경과 시 연속 완료, completedAt == expectedEndAt
 - 출하: CONFIRMED → RELEASE, 재고 감소
+- `listConfirmedOrders()`: CONFIRMED만 반환, 다른 상태 제외
+- `snapshotContainsOrdersGroupedByStatus()`: RESERVED/CONFIRMED 분류, REJECTED 제외
+
+### TablePrinterTest
+- RUNNING 작업 출력에 총시간·시작·완료예정 포함 검증
+- WAITING 작업의 시작/완료예정 컬럼에 `-` 출력 검증
+
+### MutableTimeProviderTest
+- `advanceMinutes(0)` → `IllegalArgumentException("경과 시간은 1분 이상이어야 합니다.")`
+- `advanceMinutes(-1)` → 동일
+- `advanceMinutes(1)` → 정상 시간 증가
 
 ### DummyDataServiceTest (@TempDir)
-- `generateIfMissing()` 멱등성: 2회 호출해도 5 samples / 4 orders / 2 jobs
+- `generateIfMissing()` 멱등성: 2회 호출해도 5 samples / 4 orders / 1 job
 
 ## 통합 테스트
 
