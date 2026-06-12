@@ -10,11 +10,19 @@ public class InputView {
     }
 
     public int readInt(String prompt) {
-        return Integer.parseInt(readLine(prompt));
+        try {
+            return Integer.parseInt(readLine(prompt));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("정수를 입력해주세요.");
+        }
     }
 
     public double readDouble(String prompt) {
-        return Double.parseDouble(readLine(prompt));
+        try {
+            return Double.parseDouble(readLine(prompt));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("숫자를 입력해주세요.");
+        }
     }
 
     public String readText(String prompt) {
