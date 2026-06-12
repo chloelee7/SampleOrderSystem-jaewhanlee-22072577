@@ -1,5 +1,6 @@
 package com.ssemi.sampleorder.domain.service;
 
+import com.ssemi.sampleorder.domain.model.Order;
 import com.ssemi.sampleorder.domain.model.OrderStatus;
 import com.ssemi.sampleorder.domain.model.ProductionJob;
 
@@ -10,11 +11,13 @@ public record MonitoringSnapshot(
         Map<OrderStatus, Integer> activeOrderCounts,
         int rejectedOrderCount,
         List<InventoryRow> inventoryRows,
-        List<ProductionJob> productionJobs
+        List<ProductionJob> productionJobs,
+        Map<OrderStatus, List<Order>> activeOrdersByStatus
 ) {
     public MonitoringSnapshot {
         activeOrderCounts = Map.copyOf(activeOrderCounts);
         inventoryRows = List.copyOf(inventoryRows);
         productionJobs = List.copyOf(productionJobs);
+        activeOrdersByStatus = Map.copyOf(activeOrdersByStatus);
     }
 }

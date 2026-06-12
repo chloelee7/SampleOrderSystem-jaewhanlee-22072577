@@ -15,8 +15,11 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class WorkflowServiceTest {
@@ -144,5 +147,23 @@ class WorkflowServiceTest {
         assertEquals(0, released.allocatedQuantity());
         assertEquals(470, sampleRepository.findById("S-001").orElseThrow().stockQuantity());
         assertThrows(IllegalArgumentException.class, () -> releaseService.releaseOrder(order.id()));
+    }
+
+    @Test
+    void snapshotContainsOrdersGroupedByStatus() {
+        sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
+        Order reserved = orderService.reserveOrder("S-001", "AI Lab", 5);
+        Order toConfirm = orderService.reserveOrder("S-001", "Fab B", 5);
+        orderService.approveOrder(toConfirm.id());
+        Order toReject = orderService.reserveOrder("S-001", "Reject Co", 3);
+        orderService.rejectOrder(toReject.id());
+
+        MonitoringSnapshot snapshot = monitoringService.createSnapshot();
+        Map<OrderStatus, List<Order>> byStatus = snapshot.activeOrdersByStatus();
+
+        assertEquals(1, byStatus.getOrDefault(OrderStatus.RESERVED, List.of()).size());
+        assertEquals(reserved.id(), byStatus.get(OrderStatus.RESERVED).get(0).id());
+        assertEquals(1, byStatus.getOrDefault(OrderStatus.CONFIRMED, List.of()).size());
+        assertFalse(byStatus.containsKey(OrderStatus.REJECTED), "REJECTED는 activeOrdersByStatus에 포함되지 않아야 함");
     }
 }

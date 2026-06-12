@@ -9,6 +9,8 @@ import com.ssemi.sampleorder.repository.SampleRepository;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MonitoringService {
     private static final List<OrderStatus> ACTIVE_STATUSES = List.of(
@@ -52,7 +54,11 @@ public class MonitoringService {
                 .map(sample -> toInventoryRow(sample, orders))
                 .toList();
 
-        return new MonitoringSnapshot(activeCounts, rejectedCount, inventoryRows, productionJobRepository.findAll());
+        Map<OrderStatus, List<Order>> byStatus = orders.stream()
+                .filter(o -> ACTIVE_STATUSES.contains(o.status()))
+                .collect(Collectors.groupingBy(Order::status));
+
+        return new MonitoringSnapshot(activeCounts, rejectedCount, inventoryRows, productionJobRepository.findAll(), byStatus);
     }
 
     private InventoryRow toInventoryRow(Sample sample, List<Order> orders) {
