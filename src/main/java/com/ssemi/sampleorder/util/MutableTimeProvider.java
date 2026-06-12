@@ -15,6 +15,9 @@ public class MutableTimeProvider implements TimeProvider {
     }
 
     public void advanceMinutes(long minutes) {
+        if (minutes <= 0) {
+            throw new IllegalArgumentException("경과 시간은 1분 이상이어야 합니다.");
+        }
         currentTime = currentTime.plusMinutes(minutes);
     }
 }
