@@ -31,7 +31,7 @@ PDF 과제 요구사항과 구현 위치·테스트 위치의 1:1 대응표.
 
 | 요구사항 | 구현 | 테스트 |
 |---|---|---|
-| RESERVED 목록 조회 | `ApprovalController`, `OrderService.listReservedOrders()` | `WorkflowServiceTest` |
+| RESERVED 목록 조회 | `ApprovalController`, `OrderService.listReservedOrders()` | `SampleAndOrderServiceTest.listReservedOrdersReturnsOnlyReservedStatus` |
 | 승인 — 재고 충분 → CONFIRMED | `OrderService.approveOrder()` | `WorkflowServiceTest.approvesOrderAsConfirmedWhenAvailableStockIsEnough` |
 | 승인 — 재고 부족 → PRODUCING + 생산잡 자동 등록 | `OrderService.approveOrder()`, `ProductionService.enqueueProduction()` | `WorkflowServiceTest.approvesOrderAsProducingAndCreatesRunningProductionJobWhenStockIsShort` |
 | 거절 → REJECTED | `OrderService.rejectOrder()` | `WorkflowServiceTest.rejectsReservedOrder` |
@@ -80,6 +80,6 @@ PDF 과제 요구사항과 구현 위치·테스트 위치의 1:1 대응표.
 |---|---|
 | CLAUDE.md / PRD.md 등 문서 관리 | `CLAUDE.md`, `PRD.md`, `README.md`, `ARCHITECTURE.md`, `TEST_PLAN.md` |
 | Harness 도입 | `app/HarnessScenarioTest.java`, `harness/SCENARIO.md` |
-| Test | 26개 단위/통합 테스트 (`./gradlew test`) |
+| Test | 27개 단위/통합 테스트 (`./gradlew test`) |
 | CleanCode | record 도메인 모델, 레이어 분리 (controller/service/repository/persistence) |
-| Commit 이력 | 10개 의미있는 커밋 (`git log --oneline`) |
+| Commit 이력 | 11개 의미있는 커밋 (`git log --oneline`) |
