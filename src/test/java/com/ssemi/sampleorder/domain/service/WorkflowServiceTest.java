@@ -166,6 +166,16 @@ class WorkflowServiceTest {
     }
 
     @Test
+    void activeOrdersByStatusListIsImmutable() {
+        sampleService.registerSample("S-001", "실리콘 웨이퍼-8인치", 0.5, 0.92, 480);
+        orderService.reserveOrder("S-001", "AI Lab", 5);
+        MonitoringSnapshot snapshot = monitoringService.createSnapshot();
+        List<Order> list = snapshot.activeOrdersByStatus().get(OrderStatus.RESERVED);
+        assertThrows(UnsupportedOperationException.class,
+                () -> list.add(null), "activeOrdersByStatus value list는 불변이어야 함");
+    }
+
+    @Test
     void listProductionJobsByStatusForLineDisplay() {
         sampleService.registerSample("S-003", "SiC 파워기판-6인치", 0.8, 0.92, 0);
         orderService.approveOrder(orderService.reserveOrder("S-003", "Lab A", 10).id()); // RUNNING

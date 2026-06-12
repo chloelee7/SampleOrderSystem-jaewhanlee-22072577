@@ -4,6 +4,8 @@ import com.ssemi.sampleorder.domain.model.Order;
 import com.ssemi.sampleorder.domain.model.OrderStatus;
 import com.ssemi.sampleorder.domain.model.ProductionJob;
 
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,8 @@ public record MonitoringSnapshot(
         activeOrderCounts = Map.copyOf(activeOrderCounts);
         inventoryRows = List.copyOf(inventoryRows);
         productionJobs = List.copyOf(productionJobs);
-        activeOrdersByStatus = Map.copyOf(activeOrdersByStatus);
+        Map<OrderStatus, List<Order>> deepCopy = new EnumMap<>(OrderStatus.class);
+        activeOrdersByStatus.forEach((k, v) -> deepCopy.put(k, List.copyOf(v)));
+        activeOrdersByStatus = Collections.unmodifiableMap(deepCopy);
     }
 }
