@@ -49,6 +49,7 @@ PDF 과제 요구사항과 구현 위치·테스트 위치의 1:1 대응표.
 | 생산완료 → PRODUCING → CONFIRMED, 재고 증가 | `ProductionService.synchronizeProductionLine()` | `WorkflowServiceTest`, `HarnessScenarioTest` |
 | FIFO 스케줄링 | `ProductionService.startNextWaitingJobIfIdle()` | `WorkflowServiceTest.processesProductionJobsInFifoOrderAndConfirmsOrders` |
 | 여러 작업 일괄 완료 (충분한 시간 경과 시) | `ProductionService.synchronizeProductionLine()` (while 루프) | `WorkflowServiceTest.completesMultipleJobsWhenSufficientTimeElapses` |
+| 숫자 입력 오류 처리 (정수/실수 포맷 오류 시 명확한 메시지) | `InputView.readInt()`, `InputView.readDouble()` | `InputViewTest` |
 
 ### 출고 처리
 
@@ -81,6 +82,6 @@ PDF 과제 요구사항과 구현 위치·테스트 위치의 1:1 대응표.
 |---|---|
 | CLAUDE.md / PRD.md 등 문서 관리 | `CLAUDE.md`, `PRD.md`, `README.md`, `ARCHITECTURE.md`, `TEST_PLAN.md` |
 | Harness 도입 | `app/HarnessScenarioTest.java`, `harness/SCENARIO.md` |
-| Test | 36개 단위/통합 테스트 (`./gradlew test`) |
+| Test | 39개 단위/통합 테스트 (`./gradlew test`) |
 | CleanCode | record 도메인 모델, 레이어 분리 (controller/service/repository/persistence) |
-| Commit 이력 | 16개 의미있는 커밋 (`git log --oneline`) |
+| Commit 이력 | 22개 의미있는 커밋 (`git log --oneline`) |
